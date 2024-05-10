@@ -25,13 +25,16 @@ func main() {
 	}
 
 	telegram_api_key := os.Getenv("TELEGRAM_API_KEY")
-	admin_user_id_str := os.Getenv("ADMIN_USER_ID")
 
+	// sets admins telegram user id
+	admin_user_id_str := os.Getenv("ADMIN_USER_ID")
 	auID, err := strconv.Atoi(admin_user_id_str)
 	if err != nil {
 		log.Panic(err)
 	}
 	admin_user_id := int64(auID)
+	// sets as admin (just to use some functions inside)
+	userManager.AddUser(admin_user_id, "admin", "super", "admin")
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
@@ -45,12 +48,10 @@ func main() {
 		panic(err)
 	}
 
-	// sets as admin (just to use some functions inside)
-	userManager.AddUser(admin_user_id, "admin", "super", "admin")
-
 	telbot := telbot.New()
 	telbot.SetUserManager(userManager)
 	telbot.AddRule(bot.HandlerTypeMessageText, `^/start`, myStartHandler)
+	telbot.AddRule(bot.HandlerTypeMessageText, `^/mydata`, myDataHandler)
 	telbot.AddRule(bot.HandlerTypeMessageText, `^/letmein`, letMeInHandler)
 
 	telbot.InitRules(b)

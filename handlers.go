@@ -19,8 +19,19 @@ func defaultHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 }
 
 func myStartHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+	userInfo := update.Message.From
+	response := fmt.Sprintf("Hi %s , %s", userInfo.Username, update.Message.Text)
 
-	response := fmt.Sprintf("Hi %s , %s", update.Message.From.FirstName, update.Message.Text)
+	b.SendMessage(ctx, &bot.SendMessageParams{
+		ChatID: update.Message.Chat.ID,
+		Text:   response,
+	})
+}
+
+func myDataHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+	userInfo := update.Message.From
+	userContact := update.Message.Contact
+	response := fmt.Sprintf("Your info \n %#v \n %#v", userInfo, userContact)
 
 	b.SendMessage(ctx, &bot.SendMessageParams{
 		ChatID: update.Message.Chat.ID,
@@ -31,7 +42,8 @@ func myStartHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 func letMeInHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 	if userManager.IsAllowedUser(update.Message.From.ID) {
-		response := fmt.Sprintf("%s , %s", userManager.GetUser().Name, update.Message.Text)
+		userInfo := update.Message.From
+		response := fmt.Sprintf("%s , you are welcome \n", userInfo.FirstName)
 
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
