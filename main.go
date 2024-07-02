@@ -6,14 +6,15 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"strconv"
+	"telbot/app"
 	"telbot/telbot"
+	"telbot/usermanager"
 
 	"github.com/go-telegram/bot"
 	"github.com/joho/godotenv"
 )
 
-var userManager = telbot.NewUserManager()
+var userManager = usermanager.NewUserManager()
 
 // Send any text message to the bot after the bot has been started
 
@@ -24,35 +25,31 @@ func main() {
 		log.Fatal(err)
 	}
 
-	telegram_api_key := os.Getenv("TELEGRAM_API_KEY")
+	// Load config
+	config := app.NewConfig()
 
-	// sets admins telegram user id
-	admin_user_id_str := os.Getenv("ADMIN_USER_ID")
-	auID, err := strconv.Atoi(admin_user_id_str)
-	if err != nil {
-		log.Panic(err)
-	}
-	admin_user_id := int64(auID)
-	// sets as admin (just to use some functions inside)
-	userManager.AddUser(admin_user_id, "admin", "super", "admin")
+	userManager.AddUser(config.AdminUserId, "admin", "super", "admin")
+
+	telbot := telbot.New()
+	telbot.SetUserManager(userManager)
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 
 	opts := []bot.Option{
-		bot.WithDefaultHandler(defaultHandler),
+		bot.WithDefaultHandler(telbot.Handlers.Default),
 	}
 
-	b, err := bot.New(telegram_api_key, opts...)
+	b, err := bot.New(config.TelegramApiKey, opts...)
 	if err != nil {
 		panic(err)
 	}
 
-	telbot := telbot.New()
-	telbot.SetUserManager(userManager)
-	telbot.AddRule(bot.HandlerTypeMessageText, `^/start`, myStartHandler)
-	telbot.AddRule(bot.HandlerTypeMessageText, `^/mydata`, myDataHandler)
-	telbot.AddRule(bot.HandlerTypeMessageText, `^/letmein`, letMeInHandler)
+	telbot.AddRule(bot.HandlerTypeMessageText, `^/start`, telbot.Handlers.MyStart)
+	telbot.AddRule(bot.HandlerTypeMessageText, `^/args`, telbot.Handlers.GetArgs)
+	telbot.AddRule(bot.HandlerTypeMessageText, `^/mydata`, telbot.Handlers.MyData)
+	telbot.AddRule(bot.HandlerTypeMessageText, `^/letmein`, telbot.Handlers.LetMeIn)
+	telbot.AddRule(bot.HandlerTypeMessageText, `^/ifthisis`, telbot.Handlers.IfThisIs)
 
 	telbot.InitRules(b)
 
@@ -62,7 +59,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	appBanner(botinfo)
+	app.AppBanner(botinfo)
 
 	b.Start(ctx)
 }

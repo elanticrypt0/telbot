@@ -1,4 +1,4 @@
-package telbot
+package usermanager
 
 type User struct {
 	ID        int64

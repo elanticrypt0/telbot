@@ -1,4 +1,4 @@
-package telbot
+package usermanager
 
 type UserManager struct {
 	Users        []User

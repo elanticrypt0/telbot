@@ -2,21 +2,30 @@ package telbot
 
 import (
 	"regexp"
+	"telbot/handlers"
+	"telbot/usermanager"
 
 	"github.com/go-telegram/bot"
 )
 
 type Telbot struct {
-	UserManager *UserManager
+	UserManager *usermanager.UserManager
+	Handlers    handlers.Handlers
 	Rules       []Rule
 }
 
 func New() *Telbot {
-	return &Telbot{}
+	return &Telbot{
+		Handlers: handlers.New(),
+	}
 }
 
-func (me *Telbot) SetUserManager(userManager *UserManager) {
+func (me *Telbot) SetUserManager(userManager *usermanager.UserManager) {
 	me.UserManager = userManager
+}
+
+func (me *Telbot) SetHandlers(handlerIntance handlers.Handlers) {
+	me.Handlers = handlerIntance
 }
 
 func (me *Telbot) AddRule(handlerType bot.HandlerType, regex string, handlerFunc bot.HandlerFunc) {

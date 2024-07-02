@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -6,13 +6,14 @@ import (
 	"github.com/go-telegram/bot/models"
 )
 
-func appBanner(botinfo *models.User) {
+func AppBanner(botinfo *models.User) {
 
 	botInfo := fmt.Sprintf("BotInfo : %#v", botinfo)
 
 	fmt.Println("")
 	fmt.Println(":: TELBOT ::")
 	fmt.Println("::   ON   ::")
+	fmt.Println("::        ::")
 	fmt.Println(botInfo)
 	fmt.Println("")
 }
