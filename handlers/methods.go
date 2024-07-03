@@ -81,7 +81,7 @@ func (me *Handlers) IfThisIs(ctx context.Context, b *bot.Bot, update *models.Upd
 
 func (me *Handlers) GetArgs(ctx context.Context, b *bot.Bot, update *models.Update) {
 
-	argsQty, args := me.ArgsGetter(update.Message.Text)
+	argsQty, args := me.getArgs(update.Message.Text)
 
 	response := fmt.Sprintf("Args (%d): %#v", argsQty, args)
 	fmt.Println(response)

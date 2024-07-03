@@ -17,7 +17,7 @@ func (me *Handlers) SetUserManager(usermanagerInstace *usermanager.UserManager) 
 	me.UserManager = usermanagerInstace
 }
 
-func (me *Handlers) ArgsGetter(text string) (int, []string) {
+func (me *Handlers) getArgs(text string) (int, []string) {
 	args := strings.Split(text, " ")
 	return len(args) - 1, args[1:]
 
